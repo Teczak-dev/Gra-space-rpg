@@ -4,15 +4,28 @@ Planet001.__index = Planet001
 function Planet001:new(x, y)
     local planet = {}
     setmetatable(planet, Planet001)
-    planet.x = x
-    planet.y = y
-    planet.width = 32
-    planet.height = 32
-    planet.speed = 300
-    planet.collider = world:newBSGRectangleCollider(x, y, planet.width, planet.height, 10)
-    planet.collider:setFixedRotation(true)
+    self.x = x
+    self.y = y
+    self.water = {}
+    self.map = sti("assets/tilemaps/planet_001.lua")
+
+    if self.map.layers["water"] then
+        for i, obj in pairs(self.map.layers["water"].objects) do
+            water_junk = {}
+            water_junk.body = love.physics.newBody(world, obj.x, obj.y, "static")
+            water_junk.shape = love.physics.newRectangleShape(obj.width/2,obj.height/2,  obj.width, obj.height)
+            water_junk.fixture = love.physics.newFixture(water_junk.body, water_junk.shape)
+            table.insert(planet.water, water_junk)
+        end
+    end
+
     --planet.image = love.graphics.newImage("assets/player.png")
     
     return planet  
-    
 end
+
+function Planet001:draw()
+    self.map:drawLayer(self.map.layers["ground"])
+end
+
+return Planet001
