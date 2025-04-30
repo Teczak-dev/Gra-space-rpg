@@ -1,10 +1,15 @@
+--[[
+    * Pause system
+    * This system handles the pause menu in the game.
+    * It allows the player to pause the game and access options or exit.
+]]
 local Pause = {}
 Pause.__index = Pause
 
-
-local pause_width,pause_height = 200,200
-local pause_x = SCREEN_WIDTH/2 - pause_width/2
-local pause_y = SCREEN_HEIGHT/2 - pause_height/2
+-- Setup variables
+local pause_width,pause_height = 200,190
+local pause_x = SCREEN_WIDTH /2 - pause_width/2
+local pause_y = SCREEN_HEIGHT /2 - pause_height/2
 margin = 10
 resume_rectangle = {fill ="fill", 
                         x = pause_x + margin,

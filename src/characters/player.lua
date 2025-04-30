@@ -1,3 +1,9 @@
+--[[
+    * Player Class
+    * This class represents the player character in the game.
+    * It handles player movement, health, and rendering.
+]]
+
 local Player = {}
 Player.__index = Player
 
@@ -6,23 +12,27 @@ function Player:new(x,y)
     local player = {}
     setmetatable(player, Player)
     self.canMove = true
+    self.sprite = love.graphics.newImage("assets/sprites/character.png") 
     self.x = x
     self.y = y
-    self.width = 32
-    self.height = 32
+    self.width = 64
+    self.height = 64
     self.speed = 20000
     self.body = love.physics.newBody(world, self.x, self.y, "dynamic")
-    self.shape = love.physics.newRectangleShape(self.width/2,self.height/2,self.width, self.height)
+    self.shape = love.physics.newRectangleShape(self.width,self.height/2+7,self.width, self.height)
     player.fixture = love.physics.newFixture(self.body, self.shape)
     player.body:setFixedRotation(true)
+
+
+    self.hp = 100
+    self.maxhp = 100
     --player.image = love.graphics.newImage("assets/player.png")
     
     return player  
 end
 
 function Player:draw()
-    love.graphics.setColor(1, 0.2, 0.7)
-    love.graphics.rectangle("fill", self.x , self.y, self.width, self.height)
+	love.graphics.draw(self.sprite, self.x, self.y, 0, 2,2)
 end
 
 function Player:update(dt)
@@ -54,9 +64,14 @@ function Player:update(dt)
     end
 
     self.x, self.y = self.body:getPosition()
+end
 
-    
-
+function Player:TakeDamage(damage)
+    self.hp = self.hp - damage
+    if self.hp <= 0 then
+        -- Handle player death (e.g., respawn, game over, etc.)
+        print("Player is dead!")
+    end    
 end
 
 return Player
