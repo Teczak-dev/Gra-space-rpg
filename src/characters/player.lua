@@ -17,7 +17,12 @@ function Player:new(x,y)
     self.y = y
     self.width = 64
     self.height = 64
+    self.normal_speed = 20000
     self.speed = 20000
+    self.sprint_speed = 40000
+    self.dash = 100
+    self.dash_cooldown = 0.5
+    self.dash_time = 0
     self.body = love.physics.newBody(world, self.x, self.y, "dynamic")
     self.shape = love.physics.newRectangleShape(self.width,self.height/2+7,self.width, self.height)
     player.fixture = love.physics.newFixture(self.body, self.shape)
@@ -36,6 +41,12 @@ function Player:draw()
 end
 
 function Player:update(dt)
+    self.dash_time = self.dash_time + dt
+    if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+        self.speed = self.sprint_speed
+    else
+        self.speed = self.normal_speed
+    end
     local speed = self.speed * dt
     local vx = 0
     local vy = 0
@@ -52,6 +63,14 @@ function Player:update(dt)
         if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
             vx = speed
         end
+        if love.keyboard.isDown("space") then
+            
+            if self.dash_time >= self.dash_cooldown  then
+                --DEBUG_TEXT = "space"
+                vx,vy = vx * self.dash, vy * self.dash
+                self.dash_time = 0
+            end
+        end
     end
 
     self.body:setLinearVelocity(vx, vy)
@@ -59,7 +78,7 @@ function Player:update(dt)
     if self.body:getX() <= 1 or self.body:getX() >= sm.currentScene.map.width * sm.currentScene.map.tilewidth - self.width then
         self.body:setX(self.x)
     end
-    if self.body:getY() <= 1 or self.body:getY() >= sm.currentScene.map.width * sm.currentScene.map.tilewidth - self.height then
+    if self.body:getY() <= 1 or self.body:getY() >= sm.currentScene.map.height * sm.currentScene.map.tilewidth - self.height*2 then
         self.body:setY(self.y)
     end
 

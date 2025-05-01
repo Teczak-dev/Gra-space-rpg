@@ -4,5 +4,8 @@
     ],
     "Lua.diagnostics.globals": [
         "love"
-    ]
+    ],
+    "Lua.runtime.version": "LuaJIT",
+    "Lua.workspace.checkThirdParty": false,
+    "lua-local.interpreter": "LuaJIT"
 }

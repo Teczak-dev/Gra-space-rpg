@@ -42,6 +42,7 @@ function Planet001:new(x, y)
 end
 
 function Planet001:draw()
+    love.graphics.setColor(1, 1, 1)
     self.map:drawLayer(self.map.layers["ground"])
 end
 
