@@ -49,7 +49,7 @@ local volume_slider = {
     y = res_apply_button.y + res_apply_button.h + 20,
     w = 180,
     h = 20,
-    value = s.volume, -- początkowa wartość głośności (0.0 - 1.0)
+    value = love.audio.getVolume(), -- początkowa wartość głośności (0.0 - 1.0)
 }
 
 
@@ -59,6 +59,7 @@ function Pause:new()
     setmetatable(pause, Pause)
     pause.isPaused = false
     pause.isOptions = false
+    pause.canPause = true
     return pause
     
 end
@@ -75,6 +76,7 @@ function Pause:mouse(x,y)
         if x > options_exit_button.x and x < options_exit_button.x + options_exit_button.w then
             if y > options_exit_button.y and y < options_exit_button.y + options_exit_button.h then
                 self:Options()
+                save_load:saveSettings()
             end
         end
 
@@ -110,7 +112,10 @@ function Pause:mouse(x,y)
             dragging = true
             -- Oblicz wartość głośności na podstawie pozycji myszy
             volume_slider.value = (x - volume_slider.x) / volume_slider.w
+            
             love.audio.setVolume(volume_slider.value)
+            save_load:saveSettings()
+            
         else
             dragging = false
         end
@@ -156,7 +161,9 @@ function Pause:update(dt)
         volume_slider.value = (mx - volume_slider.x) / volume_slider.w
         -- Ogranicz wartość głośności do zakresu 0.0-1.0
         volume_slider.value = math.min(1, math.max(0, volume_slider.value))
+        s.value = volume_slider.value
         love.audio.setVolume(volume_slider.value)
+        
     end
 end
 
@@ -307,7 +314,7 @@ function Pause:recreatingObjects()
         y = res_apply_button.y + res_apply_button.h + 20,
         w = 180,
         h = 20,
-        value = s.volume, -- początkowa wartość głośności (0.0 - 1.0)
+        value = love.audio.getVolume(), -- początkowa wartość głośności (0.0 - 1.0)
     }
 end
 

@@ -12,7 +12,6 @@ function Settings:new()
     table.sort(settings.resolutions, function(a, b) return a.width * a.height > b.width * b.height end)
     settings.current_resolution = #settings.resolutions
     settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT = settings.resolutions[settings.current_resolution].width, settings.resolutions[settings.current_resolution].height
-    settings.volume = 1
     
     love.window.setMode(
         settings.resolutions[settings.current_resolution].width,
@@ -41,7 +40,7 @@ function Settings:toggleWindow()
     self.SCREEN_HEIGHT = mode.height
     pause:recreatingObjects()
     playerUI:UpdateAfterChangeOfResolution()
-    save_load:saveGame()
+    save_load:saveSettings()
 end
 
 function Settings:toggleFullscreen()

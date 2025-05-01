@@ -15,7 +15,7 @@ function Player:new(x,y)
     self.sprite = love.graphics.newImage("assets/sprites/character.png") 
     self.x = x
     self.y = y
-    self.width = 64
+    self.width = 64-16
     self.height = 64
     self.normal_speed = 20000
     self.speed = 20000
@@ -24,7 +24,7 @@ function Player:new(x,y)
     self.dash_cooldown = 0.5
     self.dash_time = 0
     self.body = love.physics.newBody(world, self.x, self.y, "dynamic")
-    self.shape = love.physics.newRectangleShape(self.width,self.height/2+7,self.width, self.height)
+    self.shape = love.physics.newRectangleShape(self.width* 1.3, self.height/2+7,self.width, self.height)
     player.fixture = love.physics.newFixture(self.body, self.shape)
     player.body:setFixedRotation(true)
 

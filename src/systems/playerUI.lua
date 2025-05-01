@@ -49,11 +49,12 @@ function PlayerUI:draw()
     if dashPercentage > 1 then
         dashPercentage = 1
     end
-    love.graphics.rectangle("fill", self.dashBar['x'], self.dashBar['y'], self.dashBar['width'] * dashPercentage, self.dashBar['height'])
-    love.graphics.setColor(1, 1, 1) -- Reset color to white
-    
+    if dashPercentage ~= 1 then
+        love.graphics.rectangle("fill", self.dashBar['x'], self.dashBar['y'], self.dashBar['width'] * dashPercentage, self.dashBar['height'])
+        love.graphics.setColor(1, 1, 1) -- Reset color to white
+    end
     if self.is.mapOpen then
-        love.graphics.draw(self.map_img, 200, 50, 0, 0.32)
+        love.graphics.draw(self.map_img, 200, 50, 0, love.graphics.getWidth() / self.map_img:getWidth() * 0.7 )
     end
 end
 function PlayerUI:update(dt)

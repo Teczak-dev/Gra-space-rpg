@@ -32,7 +32,7 @@ function Planet001:new(x, y)
             build.body = love.physics.newBody(world, obj.x, obj.y, "static")
             build.shape = love.physics.newRectangleShape(obj.width/2,obj.height/2,  obj.width, obj.height)
             build.fixture = love.physics.newFixture(build.body, build.shape)
-            table.insert(planet.water, build)
+            table.insert(planet.builds, build)
         end
     end
 

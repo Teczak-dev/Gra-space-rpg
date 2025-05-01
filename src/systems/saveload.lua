@@ -8,25 +8,27 @@ function SaveLoad:new()
     return saveLoad
 end
 
-function SaveLoad:saveGame(player, world)
+function SaveLoad:saveSettings(player, world)
     local saveSettins = {}
     saveSettins.IS_FULLSCREEN = s.IS_FULLSCREEN
     saveSettins.current_resolution = s.current_resolution
+    saveSettins.volume = love.audio.getVolume()
     
     serializedData = lume.serialize(saveSettins)
     love.filesystem.write("settings.txt", serializedData)
 
 end
 
-function SaveLoad:loadGame()
+function SaveLoad:loadSettings()
     file = love.filesystem.read("settings.txt")
     if not file then
         return
     end
     settingsData = lume.deserialize(file)
     if  settingsData then
-        s.IS_FULLSCREEN = settingsData.IS_FULLSCREEN
-        s.current_resolution = settingsData.current_resolution
+        s.IS_FULLSCREEN = settingsData.IS_FULLSCREEN or s.IS_FULLSCREEN
+        s.current_resolution = settingsData.current_resolution or s.current_resolution
+        love.audio.setVolume(settingsData.volume)
         s:toggleWindow()
     end
 

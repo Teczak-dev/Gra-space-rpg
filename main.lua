@@ -22,19 +22,20 @@ Planet_001 = require 'src/scenes/planet_001'
 Player = require 'src/characters/player'
 Gun = require 'src/weapons/gun'
 Bullet = require 'src/logic/bullet'
+NPC = require 'src/characters/test_npc'
+Npcs = {}
 
 
 -- Load systems
 Pause = require 'src/systems/pause'
 PlayerUI = require 'src/systems/playerUI'
 Save_load = require 'src/systems/saveload'
+TalkSys = require 'src/systems/talksys'
 
 DEBUG_TEXT = ""
 function love.load()
     s = Settings:new()
-    
-
-    
+    talk = TalkSys:new()
 	love.window.resizable = true
     love.window.setMode(s.SCREEN_WIDTH, s.SCREEN_HEIGHT)
     love.window.setTitle(s.GAME_TITLE)
@@ -48,6 +49,7 @@ function love.load()
     pause = Pause:new()
 
     player = Player:new(6322 , 1160)
+    
 
     playerUI = PlayerUI:new(player)
     gun = Gun:new(player.x, player.y)
@@ -55,7 +57,18 @@ function love.load()
 	
 
     save_load = Save_load:new()
-    save_load:loadGame()
+    save_load:loadSettings()
+
+    Npcs = {NPC:new(6900 , 4580, {
+        "Player: Hey, what are you doing here?",
+        "NPC: I'm just a simple NPC, trying to make my way in the world.",
+        "Player: Well, you should be careful. There are dangerous things out there.",
+        "NPC: I know, but I have to keep moving forward.",
+        "Player: I understand. Just be careful.",
+        "NPC: I will. Thanks for the warning.",
+        "Player: No problem. Good luck out there.",
+        "NPC: Thanks! You too!"
+    } )}
 end
 
 
@@ -70,18 +83,24 @@ function love.update(dt)
     worldX, worldY = cam:worldCoords(mx, my)
     pause:update(dt)
     gun:update(dt)
+    talk:update(dt)
+
 end
 function love.draw()
 
     cam:attach()
         sm.currentScene:draw()
-        --wdrawColliders()
+        --drawColliders()
+        for i, npc in ipairs(Npcs) do
+            npc:draw()
+        end
         player:draw()
         gun:draw()
     cam:detach()
     playerUI:draw()
     debug()
     pause:draw()
+    talk:draw()
 end
 
 -- this function limits the camera positions to the map
@@ -144,10 +163,11 @@ end
 -- Inputs
 
 function love.keypressed(key)
-    if key == "escape" then
+    if key == "escape" and pause.canPause then
         if pause.isPaused then
             if pause.isOptions then
                 pause:Options()
+                save_load:saveGame()
             else
                 pause:resume()
             end
@@ -158,6 +178,9 @@ function love.keypressed(key)
     end
     if key == "m" then
         playerUI:OpenCloseMap()
+    end
+    if key == "space" then
+        talk.talk_time = 0
     end
 end
 
@@ -179,5 +202,4 @@ function love.mousereleased(x,y, button)
             pause:SetDragging()
         end
     end
-    
 end
