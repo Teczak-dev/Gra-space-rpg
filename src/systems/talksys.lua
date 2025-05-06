@@ -4,15 +4,14 @@ TalkSys.__index = TalkSys
 function TalkSys:new()
     local talksys = {}
     setmetatable(talksys, TalkSys)
-    self.dialogues = {}
-    self.text = ""
-    self.npc = nil
-    self.font = love.graphics.newFont(25)
-    self.isTalking = false
-    self.canTalk = true
-    self.distance_to_talk = 50
-    self.talk_time_limit = 2
-    self.talk_time = self.talk_time_limit
+    talksys.dialogues = {}
+    talksys.text = ""
+    talksys.npc = nil
+    talksys.font = love.graphics.newFont(25)
+    talksys.isTalking = false
+    talksys.canTalk = true
+    talksys.distance_to_talk = 50
+    talksys.talk_time = 0
     return talksys
 end
 
@@ -26,11 +25,13 @@ end
 
 function TalkSys:update(dt)
     if self.isTalking then
-        self.talk_time = self.talk_time - dt
-        self.text = self.dialogues[1]
-        if self.talk_time <= 0 then
+        if not self.dialogues[1].isOption then
+            self.talk_time = self.talk_time + dt
+        end
+        self.text = self.dialogues[1].dialog
+        if self.talk_time >= self.dialogues[1].time then
             table.remove(self.dialogues, 1)
-            self.talk_time = self.talk_time_limit
+            self.talk_time = 0
         end
 
         if #self.dialogues == 0 then
@@ -41,7 +42,7 @@ function TalkSys:update(dt)
         end
     else
         for i, npc in ipairs(Npcs) do
-            if love.physics.getDistance(player.fixture,npc.fixture) <= self.distance_to_talk  then
+            if love.physics.getDistance(player.fixture, npc.fixture) <= self.distance_to_talk  then
                 self.npc = npc
                 self.canTalk = true
                 break

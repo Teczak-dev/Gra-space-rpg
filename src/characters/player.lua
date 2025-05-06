@@ -11,33 +11,31 @@ Player.__index = Player
 function Player:new(x,y)
     local player = {}
     setmetatable(player, Player)
-    self.canMove = true
-    self.sprite = love.graphics.newImage("assets/sprites/character.png") 
-    self.x = x
-    self.y = y
-    self.width = 64-16
-    self.height = 64
-    self.normal_speed = 20000
-    self.speed = 20000
-    self.sprint_speed = 40000
-    self.dash = 100
-    self.dash_cooldown = 0.5
-    self.dash_time = 0
-    self.body = love.physics.newBody(world, self.x, self.y, "dynamic")
-    self.shape = love.physics.newRectangleShape(self.width* 1.3, self.height/2+7,self.width, self.height)
-    player.fixture = love.physics.newFixture(self.body, self.shape)
+    player.canMove = true
+    player.sprite = love.graphics.newImage("assets/sprites/character.png") 
+    player.x = x
+    player.y = y
+    player.width = 48
+    player.height = 64
+    player.normal_speed = 20000
+    player.speed = 20000
+    player.sprint_speed = 40000
+    player.dash = 150
+    player.dash_cooldown = 0.5
+    player.dash_time = 0
+    player.body = love.physics.newBody(world, player.x, player.y, "dynamic")
+    player.shape = love.physics.newRectangleShape(player.width* 1.3, player.height/2+7,player.width, player.height)
+    player.fixture = love.physics.newFixture(player.body, player.shape)
     player.body:setFixedRotation(true)
-
-
-    self.hp = 100
-    self.maxhp = 100
-    --player.image = love.graphics.newImage("assets/player.png")
-    
+    player.hp = 100
+    player.maxhp = 100
+    player.light_radius = 200
     return player  
 end
 
 function Player:draw()
-	love.graphics.draw(self.sprite, self.x, self.y, 0, 2,2)
+    love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.draw(self.sprite, self.x, self.y, 0, 2, 2)
 end
 
 function Player:update(dt)
@@ -66,7 +64,6 @@ function Player:update(dt)
         if love.keyboard.isDown("space") then
             
             if self.dash_time >= self.dash_cooldown  then
-                --DEBUG_TEXT = "space"
                 vx,vy = vx * self.dash, vy * self.dash
                 self.dash_time = 0
             end

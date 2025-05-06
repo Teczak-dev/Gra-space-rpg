@@ -9,14 +9,14 @@ Planet001.__index = Planet001
 function Planet001:new(x, y)
     local planet = {}
     setmetatable(planet, Planet001)
-    self.x = x
-    self.y = y
-    self.water = {}
-    self.builds = {} 
-    self.map = sti("assets/tilemaps/planet_001.lua")
+    planet.x = x
+    planet.y = y
+    planet.water = {}
+    planet.builds = {} 
+    planet.map = sti("assets/tilemaps/planet_001.lua")
 
-    if self.map.layers["water"] then
-        for i, obj in pairs(self.map.layers["water"].objects) do
+    if planet.map.layers["water"] then
+        for i, obj in pairs(planet.map.layers["water"].objects) do
             water_junk = {}
             water_junk.body = love.physics.newBody(world, obj.x, obj.y, "static")
             water_junk.shape = love.physics.newRectangleShape(obj.width/2,obj.height/2,  obj.width, obj.height)
@@ -26,8 +26,8 @@ function Planet001:new(x, y)
     end
 	
 	
-	if self.map.layers["builds"] then
-        for i, obj in pairs(self.map.layers["builds"].objects) do
+	if planet.map.layers["builds"] then
+        for i, obj in pairs(planet.map.layers["builds"].objects) do
             build = {}
             build.body = love.physics.newBody(world, obj.x, obj.y, "static")
             build.shape = love.physics.newRectangleShape(obj.width/2,obj.height/2,  obj.width, obj.height)

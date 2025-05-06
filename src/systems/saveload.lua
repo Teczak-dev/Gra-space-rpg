@@ -31,8 +31,6 @@ function SaveLoad:loadSettings()
         love.audio.setVolume(settingsData.volume)
         s:toggleWindow()
     end
-
-
 end
 
 return SaveLoad

@@ -15,6 +15,7 @@ function Bullet:new(x, y, direction)
     bullet.width = 10
     bullet.height = 10
     bullet.speed = 1000
+    bullet.time_to_remove = 2
     bullet.direction = direction
     bullet.body = love.physics.newBody(world, x, y, "dynamic")
     bullet.shape = love.physics.newRectangleShape(bullet.width, bullet.height)
@@ -27,16 +28,20 @@ function Bullet:draw()
     love.graphics.circle("fill", self.x, self.y, self.width)
 end
 function Bullet:update(dt)
+    self.time_to_remove = self.time_to_remove - dt
     local vx = self.speed * math.cos(self.direction)
     local vy = self.speed * math.sin(self.direction)
     self.body:setLinearVelocity(vx, vy)
 
     -- Update position
     self.x, self.y = self.body:getPosition()
+
 end
 function Bullet:destroy()
-    self.toRemove = true
-    world:destroyBody(self.body)
+    if self.body then
+        self.body:destroy()
+        self.body = nil
+    end
 end
 
 return Bullet

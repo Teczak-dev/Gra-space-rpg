@@ -8,23 +8,22 @@ Pause.__index = Pause
     
 
 local dragging = false
-
 -- Setup variables
 local pause_width,pause_height = 200,190
 local pause_x = s.SCREEN_WIDTH /2 - pause_width/2
 local pause_y = s.SCREEN_HEIGHT /2 - pause_height/2
-margin = 10
-resume_rectangle = {fill ="fill", 
+local margin = 10
+local resume_rectangle = {fill ="fill", 
                         x = pause_x + margin,
                         y = pause_y+10, 
                         w = 180,
                         h = 50}
-options_rectangle = {fill ="fill", 
+local options_rectangle = {fill ="fill", 
                         x = pause_x + margin,
                         y = pause_y + 50 + margin*2 ,
                         w = 180,
                         h = 50}
-exit_rectangle = {fill ="fill", 
+local exit_rectangle = {fill ="fill", 
                     x = pause_x + margin,
                     y = pause_y + 100 + margin*3, 
                     w = 180,

@@ -49,7 +49,7 @@ function Gun:update(dt)
     for i = #bullets, 1, -1 do
         local bullet = bullets[i]
         bullet:update(dt)
-        if bullet.toRemove then
+        if bullet.time_to_remove <= 0 then
             table.remove(bullets, i)
         end
     end
@@ -62,8 +62,7 @@ function Gun:shoot()
 
     ---@diagnostic disable-next-line: deprecated
     local direction = math.atan2((worldY - self.y), (worldX - self.x))
-    local bullet = Bullet:new(self.x, self.y, direction)
-    table.insert(bullets, bullet) -- Assuming you have a bullets table to store active bullets
+    table.insert(bullets, Bullet:new(self.x, self.y, direction)) -- Assuming you have a bullets table to store active bullets
     
 end
 
