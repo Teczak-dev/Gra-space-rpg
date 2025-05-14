@@ -25,45 +25,53 @@ end
 function Gun:draw()
     love.graphics.setColor(0, 1, 0) -- Set gun color to green
     
-    love.graphics.push()
-    love.graphics.translate(self.x , self.y)
-    love.graphics.rotate(self.angle)
-    love.graphics.rectangle("fill", 0, -self.height / 2, self.width, self.height)
-    love.graphics.pop()
-
+    -- Broń jest teraz rysowana w funkcji draw gracza, więc tutaj możemy usunąć 
+    -- kod rysowania broni albo pozostawić go pusty
+    
+    -- Rysujemy tylko pociski
     for _, b in ipairs(bullets) do
         b:draw()
     end
 end
+
 function Gun:update(dt)
-    self.x, self.y = player.x + player.width/2 , player.y + player.height/2
+    -- Aktualizuj położenie broni na podstawie pozycji i obrotu gracza
+    self.x = player.x
+    self.y = player.y
+    self.angle = player.angle
+    
+    -- Odliczaj czas do kolejnego strzału
     self.lastShotTime = self.lastShotTime - dt
-
-    local mx, my = love.mouse.getPosition()
-    local worldX, worldY = cam:worldCoords(mx, my)
-
-    ---@diagnostic disable-next-line: deprecated
-    self.angle = math.atan2((worldY - self.y), (worldX - self.x))
-    --self.isShot = false
-
+    
+    -- Aktualizuj pociski
     for i = #bullets, 1, -1 do
         local bullet = bullets[i]
         bullet:update(dt)
         if bullet.time_to_remove <= 0 then
             table.remove(bullets, i)
+            removeBody(bullet.body)
         end
     end
-    
 end
-function Gun:shoot()
-    gun.isShot = true
-    local mx, my = love.mouse.getPosition()
-    local worldX, worldY = cam:worldCoords(mx, my)
 
-    ---@diagnostic disable-next-line: deprecated
-    local direction = math.atan2((worldY - self.y), (worldX - self.x))
-    table.insert(bullets, Bullet:new(self.x, self.y, direction)) -- Assuming you have a bullets table to store active bullets
+function Gun:shoot()
+    -- Używamy kąta obrotu gracza zamiast obliczać go względem myszy
+    local angle = player.angle
     
+    -- Obliczamy pozycję końca broni uwzględniając obrót
+    local offsetX = self.width + 20 + 5 -- Długość broni + przesunięcie
+    local offsetY = 22 -- Zakładamy, że broń jest na środku postaci
+    
+    -- Obliczamy pozycję końca broni w przestrzeni świata
+    local bulletX = player.x + math.cos(angle) * offsetX - math.sin(angle) * offsetY
+    local bulletY = player.y + math.sin(angle) * offsetX + math.cos(angle) * offsetY
+    
+    -- Tworzymy nowy pocisk na końcu broni, z kierunkiem odpowiadającym kątowi obrotu gracza
+    table.insert(bullets, Bullet:new(bulletX, bulletY, angle))
+    
+    -- Resetujemy czas do kolejnego strzału
+    self.lastShotTime = self.cooldown
+    self.isShot = true
 end
 
 return Gun

@@ -5,48 +5,56 @@ Npcs = {}
 local function scenario_planet_001()
     Npcs = { NPC:new(6900 , 4580, {
             {
+                person = "Player",
                 dialog = "Player: Hey, what are you doing here?",
                 time = 2,
                 isOption = false
             },
 
             {
+                person = "NPC",
                 dialog = "NPC: I'm just a simple NPC, trying to make my way in the world.",
                 time = 2,
                 isOption = false
             },
 
             {
+                person = "Player",
                 dialog = "Player: Well, you should be careful. There are dangerous things out there.",
                 time = 2,
                 isOption = false
             },
 
             {
+                person = "NPC",
                 dialog = "NPC: I know, but I have to keep moving forward.",
                 time = 2,
                 isOption = false
             },
             
             {
+                person = "Player",
                 dialog = "Player: I understand. Just be careful.",
                 time = 2,
                 isOption = false
             },
             
             {
+                person = "NPC",
                 dialog = "NPC: I will. Thanks for the warning.",
                 time = 2,
                 isOption = false
             },
             
             {
+                person = "Player",
                 dialog = "Player: No problem. Good luck out there.",
                 time = 2,
                 isOption = false
             },
             
             {
+                person = "NPC",
                 dialog = "NPC: Thanks! You too!",
                 time = 2,
                 isOption = false

@@ -3,12 +3,14 @@
     * This module represents a planet in the game. It handles the loading of the planet's map,
     * the creation of water and building objects, and their rendering.
 ]]
+Pickup = require 'src/systems/Inventory/ItemPickup'
 local Planet001 = {}
 Planet001.__index = Planet001
 
 function Planet001:new(x, y)
     local planet = {}
     setmetatable(planet, Planet001)
+    
     planet.x = x
     planet.y = y
     planet.water = {}
@@ -36,14 +38,40 @@ function Planet001:new(x, y)
         end
     end
 
+    planet.items = {
+        Pickup:new(itemsDB.getItem("Health pack"), 6916, 4000),
+        Pickup:new(itemsDB.getItem("Health pack"), 6916 - 150, 4000),
+        Pickup:new(itemsDB.getItem("Health pack"), 6916 - 300, 4000),
+        Pickup:new(itemsDB.getItem("Health pack"), 6916 - 450, 4000),
+        Pickup:new(itemsDB.getItem("Health pack"), 6916 - 600, 4000),
+        Pickup:new(itemsDB.getItem("Health pack"), 6916 - 750, 4000),
+    }
+
     --planet.image = love.graphics.newImage("assets/player.png")
     
     return planet  
 end
 
+function Planet001:update(dt)
+    if #self.items > 0 then
+        for i, item in ipairs(self.items) do
+            item:update(dt, i)
+            if item.canDelete then
+                table.remove(self.items, i)
+            end
+        end
+    end
+end
+
 function Planet001:draw()
     love.graphics.setColor(1, 1, 1)
     self.map:drawLayer(self.map.layers["ground"])
+
+    if #self.items > 0 then
+        for i, item in ipairs(self.items) do
+            item:draw()
+        end
+    end
 end
 
 return Planet001

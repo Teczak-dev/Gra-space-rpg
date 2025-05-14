@@ -24,18 +24,52 @@ function Player:new(x,y)
     player.dash_cooldown = 0.5
     player.dash_time = 0
     player.body = love.physics.newBody(world, player.x, player.y, "dynamic")
-    player.shape = love.physics.newRectangleShape(player.width* 1.3, player.height/2+7,player.width, player.height)
+    local radius = math.max(player.width, player.height) / 2 * 0.8 -- promień nieco mniejszy niż gracz
+    player.shape = love.physics.newCircleShape(radius)
     player.fixture = love.physics.newFixture(player.body, player.shape)
-    player.body:setFixedRotation(true)
+    player.body:setFixedRotation(true) -- nadal możemy to ustawić, bo okrąg nie wymaga obrotu
     player.hp = 100
     player.maxhp = 100
     player.light_radius = 200
+    player.angle = 0
     return player  
 end
 
 function Player:draw()
+    -- Zapisujemy aktualną transformację
+    love.graphics.push()
+    
+    -- Przesuwamy punkt odniesienia do pozycji gracza
+    love.graphics.translate(self.x, self.y)
+    
+    -- Obracamy wszystko zgodnie z kątem gracza
+    love.graphics.rotate(self.angle)
+    
+    -- Rysowanie postaci gracza
+    love.graphics.setColor(0.941, 0.812, 0.369)
+    love.graphics.rectangle("fill", -self.width/2, -self.height/2, self.width, self.height)
+    
+    -- Rysowanie broni po prawej stronie gracza
+    love.graphics.setColor(0, 1, 0) -- Kolor broni (zielony)
+    
+    -- Przesunięcie broni na prawą stronę gracza
+    local gunWidth = 30
+    local gunHeight = 10
+    local gunOffsetX = 5  -- Przesunięcie poziome (0 = dokładnie na prawej krawędzi)
+    local gunOffsetY = 22 -- Przesunięcie pionowe w dół od środka gracza
+    
+    -- Rysujemy broń jako prostokąt na prawej stronie gracza
+    love.graphics.rectangle("fill", 
+                            self.width/2 + gunOffsetX,  -- Pozycja X (prawa strona gracza)
+                            gunOffsetY - gunHeight/2,   -- Pozycja Y (przesunięcie w dół)
+                            gunWidth, 
+                            gunHeight)
+    
+    -- Przywracamy poprzednią transformację
+    love.graphics.pop()
+    
+    -- Przywracamy domyślny kolor
     love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.draw(self.sprite, self.x, self.y, 0, 2, 2)
 end
 
 function Player:update(dt)
@@ -80,13 +114,21 @@ function Player:update(dt)
     end
 
     self.x, self.y = self.body:getPosition()
+
+    local mx, my = love.mouse.getPosition()
+    local worldX, worldY = cam:worldCoords(mx, my)
+
+    ---@diagnostic disable-next-line: deprecated
+    self.angle = math.atan2((worldY - self.y), (worldX - self.x))
 end
 
 function Player:TakeDamage(damage)
     self.hp = self.hp - damage
     if self.hp <= 0 then
+        self.hp = 0
         -- Handle player death (e.g., respawn, game over, etc.)
         print("Player is dead!")
+        
     end    
 end
 

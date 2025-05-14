@@ -2,26 +2,11 @@
 -- This is the main file for a simple Love2D game
 -- It sets up the window size, title, and fullscreen mode
 -- and initializes the game.
-
-local night_shader = [[
-    extern vec2 player_position; // Player's position in screen coordinates
-    extern float light_radius;   // Radius of the light around the player
-
-    vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
-        // Calculate the distance from the current pixel to the player's position
-        float distance = distance(screen_coords, player_position);
-
-        // If the pixel is within the light radius, keep it bright; otherwise, darken it
-        if (distance < light_radius) {
-            vec4 texel = Texel(texture, texture_coords) * color;
-            float alpha = 1.0 - smoothstep(light_radius * 0.8, light_radius, distance);
-            return vec4(texel.rgb, texel.a * alpha); // Bright pixel
-        } else {
-            return vec4(0.0, 0.0, 0.0, 1.0); // Dark pixel
-        }
-    }
-]]
-
+function removeBody(body)
+    if body and body:isDestroyed() == false then
+        body:destroy()
+    end
+end
 -- Load libraries
 
 camera = require 'libraries/camera'
@@ -42,6 +27,7 @@ Player = require 'src/characters/player'
 Gun = require 'src/weapons/gun'
 Bullet = require 'src/logic/bullet'
 NPC = require 'src/characters/test_npc'
+Enemy = require 'src/enemy/basicEnemy'
 
 
 -- Load systems
@@ -51,9 +37,17 @@ PlayerUI = require 'src/systems/playerUI'
 Save_load = require 'src/systems/saveload'
 TalkSys = require 'src/systems/talksys'
 Time = require 'src/systems/time'
+Inventory = require 'src/systems/Inventory/inventory'
+ItemsDB = require 'src/systems/Inventory/ItemsDB'
 
+
+Shaders = require 'src/shaders'
+
+DEBUG_MODE = true
 DEBUG_TEXT = ""
+FPS = 60
 function love.load()
+    itemsDB = ItemsDB:new()
     s = Settings:new()
 	love.window.resizable = true
     love.window.setMode(s.SCREEN_WIDTH, s.SCREEN_HEIGHT)
@@ -68,30 +62,28 @@ function love.load()
     sm = SceneManager:new(planet_001, {planet_001})
     pause = Pause:new()
     player = Player:new(6322 , 1160)
+    inventory = Inventory:new()
     playerUI = PlayerUI:new(player)
     gun = Gun:new(player.x, player.y)
 	cam = camera(player.x, player.y)
     save_load = Save_load:new()
     save_load:loadSettings()
-
-    n_shader = love.graphics.newShader(night_shader)
-    n_shader:send("light_radius", player.light_radius)
-    n_shader:send("player_position", {player.x, player.y})
+    
+    shaders = Shaders:new()
     time = Time:new()
-
+    enemy = Enemy:new(6000, 2000)
 end
 
 function love.update(dt)
-    
-    local maxDt = 1 / 60 -- Limit to 60 FPS
+    local maxDt = 1 / FPS -- Limit to 60 FPS
     dt = math.min(dt, maxDt)
 
-    local playerX, playerY = cam:cameraCoords(player.x, player.y)
-    n_shader:send("player_position", {playerX + player.width, playerY + player.height/2})
-
+    shaders:update(dt)
+    
     DEBUG_TEXT = ""
     if not pause.isPaused then
         player:update(dt)
+        playerUI:update(dt)
         world:update(dt)
         if player.x and player.y then
             cam:lockPosition(player.x + player.width ,player.y + player.height, cam.smooth.damped(5))
@@ -103,20 +95,33 @@ function love.update(dt)
         gun:update(dt)
         talk:update(dt)
         time:update(dt)
-        
+        planet_001:update(dt)
+        if enemy then
+            enemy:update(dt)
+        end
+        for i = #enemy_bullets, 1, -1 do
+            enemy_bullets[i]:update(dt)
+            if enemy_bullets[i].time_to_remove <= 0 then
+                table.remove(enemy_bullets, i)
+            end
+        end
     end
     pause:update(dt)
 end
 function love.draw()
-    if not time.isDay then
-        love.graphics.setShader(n_shader)
-    end
+    shaders:draw()
     cam:attach()
         sm.currentScene:draw()
         --drawColliders()
         for i, npc in ipairs(Npcs) do
             --print(i .. " " .. npc.x .. " " .. npc.y)
             npc:draw()
+        end
+        if enemy then
+        enemy:draw()
+        end
+        for _, bullet in ipairs(enemy_bullets) do
+            bullet:draw()
         end
         --time:draw()
         player:draw()
@@ -129,6 +134,7 @@ function love.draw()
     debug()
     pause:draw()
     talk:draw()
+
 end
 
 -- this function limits the camera positions to the map
@@ -168,10 +174,13 @@ function debug()
     love.graphics.print("DEBUG: " .. DEBUG_TEXT, 10, s.SCREEN_HEIGHT-200) -- 
     love.graphics.print("Volume: " .. love.audio.getVolume(), 10, s.SCREEN_HEIGHT-220) -- 
     love.graphics.print("Time: " .. time.time, 10, s.SCREEN_HEIGHT-240) --
+    love.graphics.print("Lenght of bullets: " .. #bullets, 10, s.SCREEN_HEIGHT-260) --
+    love.graphics.print("Lenght of items: " .. #planet_001.items, 10, s.SCREEN_HEIGHT-280) --
 end
 
 -- Draw colliders for debugging purposes
 function drawColliders()
+    love.graphics.setColor(1, 1, 1, 0.5)
     for _, body in pairs(world:getBodies()) do
         for _, fixture in pairs(body:getFixtures()) do
             local shape = fixture:getShape()
@@ -212,12 +221,17 @@ function love.keypressed(key)
             talk.talk_time = talk.dialogues[1].time
         end
     end
+    if key == "i" then
+        inventory:OpenCloseInventory()
+    end
 end
 
 function love.mousepressed(x,y, button)
     if button == 1 then
         if pause.isPaused then
             pause:mouse(x,y)
+        elseif inventory.isOpen then
+            inventory:mouse(x,y)
         else
             if gun.lastShotTime <= 0 then
                 gun:shoot()
@@ -231,5 +245,12 @@ function love.mousereleased(x,y, button)
         if pause.isOptions then
             pause:SetDragging()
         end
+    end
+end
+function love.wheelmoved(x, y)
+    if inventory.isOpen then
+        inventory.scrollY = inventory.scrollY + y * 20
+
+        inventory:checkScroll()
     end
 end

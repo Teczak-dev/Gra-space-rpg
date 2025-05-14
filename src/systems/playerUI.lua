@@ -33,7 +33,7 @@ function PlayerUI:new(player)
 
     playerUI.map_img = love.graphics.newImage("assets/map_img/test.JPG")
 
-
+    playerUI.interaction_Text = ""
     return playerUI
 end
 
@@ -43,6 +43,11 @@ function PlayerUI:draw()
     love.graphics.setColor(1, 0, 0) -- Red color for the health bar
     love.graphics.rectangle("fill", self.hpBar['x'], self.hpBar['y'], self.hpBar['width'] * hpPercentage, self.hpBar['height'])
 
+    -- Draw Interaction Text
+    love.graphics.setColor(1, 1, 1) -- Reset color to white
+    love.graphics.print(self.interaction_Text, self.hpBar['x'], self.hpBar['y'] + 20)
+    
+    
     -- draw dash cooldown bar
     love.graphics.setColor(0, 0, 1) -- Blue color for the dash cooldown bar
     local dashPercentage = self.player.dash_time / self.player.dash_cooldown
@@ -57,10 +62,17 @@ function PlayerUI:draw()
         love.graphics.setColor(1, 1, 1) -- Reset color to white
         love.graphics.draw(self.map_img, 200, 50, 0, love.graphics.getWidth() / self.map_img:getWidth() * 0.7 )
     end
+    inventory:draw()
 end
 function PlayerUI:update(dt)
     -- Update the player UI if needed
-    
+    -- if inventory.isOpen then
+    --     inventory:update(dt)
+    -- end
+end
+
+function PlayerUI:showText(text)
+    self.interaction_Text = text
 end
 
 function PlayerUI:OpenCloseMap()
@@ -70,6 +82,8 @@ end
 function PlayerUI:UpdateAfterChangeOfResolution()
     self.dashBar.x = s.SCREEN_WIDTH/2 - 250
     self.dashBar.y = s.SCREEN_HEIGHT- self.dashBar.height - 10
+
+    inventory:UpdateAfterChangeOfResolution()
     
 end
 

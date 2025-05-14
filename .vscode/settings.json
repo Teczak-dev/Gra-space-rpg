@@ -7,5 +7,9 @@
     ],
     "Lua.runtime.version": "LuaJIT",
     "Lua.workspace.checkThirdParty": false,
-    "lua-local.interpreter": "LuaJIT"
+    "lua-local.interpreter": "LuaJIT",
+    "Lua.diagnostics.disable": [
+        "lowercase-global",
+        "duplicate-set-field"
+    ]
 }

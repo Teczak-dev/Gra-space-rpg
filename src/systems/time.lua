@@ -7,8 +7,8 @@ function Time:new()
     setmetatable(time, Time)
     time.time = 0
     time.isDay = true
-    time.dayTime = 50
-    time.nightTime = 200
+    time.dayTime = 1000
+    time.nightTime = 1500
     return time
 end
 
@@ -23,7 +23,7 @@ function Time:update(dt)
     end
     if self.time > self.nightTime then
         self.isDay = true
-        self.time = 0
+        self.time = self.time - self.nightTime
     end
 end
 

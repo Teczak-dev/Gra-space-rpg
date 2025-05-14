@@ -36,6 +36,16 @@ function Bullet:update(dt)
     -- Update position
     self.x, self.y = self.body:getPosition()
 
+    if enemy then
+        local dx = enemy.x - self.x
+        local dy = enemy.y - self.y
+        local dist = math.sqrt(dx*dx + dy*dy)
+                
+        if dist < 1 + enemy.shape:getRadius() then
+            enemy:TakeDamage(40)
+            self.time_to_remove = 0
+        end
+    end
 end
 function Bullet:destroy()
     if self.body then

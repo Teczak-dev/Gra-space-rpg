@@ -1,14 +1,19 @@
 local Item = {}
 Item.__index = Item
 
-function Item:new(name, description, type, image, value)
+function Item:new(name, description, type, image, value, weight)
     local item = {}
     setmetatable(item, Item)
     item.name = name
     item.description = description
     item.type = type
-    item.image = image
+    --item.image = love.graphics.newImage(image)
     item.value = value
+    item.max_stack = 99
+    item.weight = weight
+    item.use = function()
+        print("Using item: " .. name)
+    end
     return item
 end
 
