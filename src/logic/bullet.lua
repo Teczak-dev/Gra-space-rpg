@@ -42,7 +42,7 @@ function Bullet:update(dt)
         local dist = math.sqrt(dx*dx + dy*dy)
                 
         if dist < 1 + enemy.shape:getRadius() then
-            enemy:TakeDamage(40)
+            enemy:TakeDamage(10)
             self.time_to_remove = 0
         end
     end

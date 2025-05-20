@@ -11,6 +11,7 @@ function SceneManager:new(startScene, scenes)
     local sceneManager = {}
     setmetatable(sceneManager, SceneManager)
     sceneManager.currentScene = startScene
+    sceneManager.scenes = scenes
     return sceneManager
     
 end
@@ -22,7 +23,14 @@ function SceneManager:loadScene(scene)
     if self.currentScene == scene then
         return
     end
-    self.currentScene = scene
+    if #self.scenes > 0 then
+        for i, s in ipairs(self.scenes) do
+            if s == scene then
+                self.currentScene = scene
+            end
+        end
+    end
+    
 end
 
 return SceneManager

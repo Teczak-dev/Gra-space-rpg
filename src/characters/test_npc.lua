@@ -4,7 +4,7 @@ Npc.__index = Npc
 function Npc:new(x,y, dialogues)
     local npc = {}
     setmetatable(npc, Npc)
-    npc.sprite = love.graphics.newImage("assets/sprites/character.png") 
+    npc.sprite = love.graphics.newImage("assets/sprites/character2.png") 
     npc.x = x
     npc.y = y
     npc.dialogues = dialogues

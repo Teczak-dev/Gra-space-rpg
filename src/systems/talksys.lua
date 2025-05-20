@@ -8,6 +8,7 @@ function TalkSys:new()
     talksys.text = ""
     talksys.npc = nil
     talksys.font = love.graphics.newFont(25)
+    talksys.font2 = love.graphics.newFont(35)
     talksys.isTalking = false
     talksys.canTalk = true
     talksys.distance_to_talk = 50
@@ -71,18 +72,29 @@ end
 function TalkSys:draw()
     if self.isTalking then
         love.graphics.setFont(self.font)
-
+        
         love.graphics.setColor(1,1,1)
+        
+        local sprite = nil
         if self.person == "Player" then
-            love.graphics.draw(player.sprite, 0 - 64,  love.graphics.getHeight() - 190, 0 , 4)
+            love.graphics.draw(player.sprite, 0 - 128,  love.graphics.getHeight() - 330, 0 , 8)
         elseif self.person == "NPC" then
-            love.graphics.draw(self.npc.sprite, s.SCREEN_WIDTH - 64* 3,  love.graphics.getHeight() - 190, 0 , 4)
+            love.graphics.draw(self.npc.sprite, 0 - 128,  love.graphics.getHeight() - 330, 0 , 8)
         end
 
+        
         love.graphics.setColor(0, 0, 0, 1)
-        love.graphics.rectangle("fill", 10, love.graphics.getHeight() - 100, love.graphics.getWidth() - 20, 90)
+        local dialog_bg = {
+            x = love.graphics.getWidth() - ( love.graphics.getWidth() - 300) - 20,
+            y = love.graphics.getHeight() - 300 - 20,
+            w = love.graphics.getWidth() - 300,
+            h = 300
+        }
+        love.graphics.rectangle("fill", dialog_bg.x , dialog_bg.y, dialog_bg.w, dialog_bg.h)
+        love.graphics.setColor(0.9,0.9,0.9)
+        love.graphics.printf(self.person, self.font2, dialog_bg.x + 10, dialog_bg.y + 10, dialog_bg.w - 20, "left")
         love.graphics.setColor(1, 1, 1)
-        love.graphics.printf(self.text, self.font, 20, love.graphics.getHeight() - 90, love.graphics.getWidth() - 40, "left")
+        love.graphics.printf(self.text, self.font, dialog_bg.x + 10, dialog_bg.y + 60, dialog_bg.w - 20, "left")
 
     end
 end

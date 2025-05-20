@@ -395,7 +395,7 @@ function Enemy:shoot()
         x = bulletX,
         y = bulletY,
         angle = randomAngle,
-        speed = 400,
+        speed = 1200,
         damage = 10,
         radius = 5,
         time_to_remove = 3,  -- Pocisk zniknie po 3 sekundach

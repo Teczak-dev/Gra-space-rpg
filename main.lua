@@ -21,6 +21,7 @@ s = Settings:new()
 -- Load maps
 SceneManager = require 'src/scenes/sceneManager'
 Planet_001 = require 'src/scenes/planet_001'
+Space = require 'src/scenes/space'
 
 -- Load character
 Player = require 'src/characters/player'
@@ -59,7 +60,8 @@ function love.load()
     scenario = Scenario:new("planet_001")
     talk = TalkSys:new()
     planet_001 = Planet_001:new(0, 0)
-    sm = SceneManager:new(planet_001, {planet_001})
+    space = Space:new()
+    sm = SceneManager:new(planet_001, {planet_001, space})
     pause = Pause:new()
     player = Player:new(6322 , 1160)
     inventory = Inventory:new()
