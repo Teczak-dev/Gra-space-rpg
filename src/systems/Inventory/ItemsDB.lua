@@ -8,7 +8,7 @@ function ItemsDB:new()
     local itemsdb = {}
     setmetatable(itemsdb, ItemsDB)
     itemsdb.items = {
-        HealthItem:new("Health pack", "Restores 50 HP", "health", nil, 10, 0.5, 50) 
+        HealthItem:new("Health pack", "Restores 50 HP", "health", nil, 10, 0.5, 50, true) 
     }
 
     itemsdb.getItem = function(name)

@@ -17,6 +17,8 @@ function Player:new(x,y)
     player.y = y
     player.width = 48
     player.height = 64
+    player.too_much_weight_normal_speed = 10000
+    player.too_much_weight_sprint_speed = 20000
     player.normal_speed = 20000
     player.speed = 20000
     player.sprint_speed = 40000
@@ -74,10 +76,19 @@ end
 
 function Player:update(dt)
     self.dash_time = self.dash_time + dt
+
     if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
-        self.speed = self.sprint_speed
+        if inventory:IsOverWeight() then
+            self.speed = self.too_much_weight_sprint_speed
+        else
+            self.speed = self.sprint_speed
+        end
     else
-        self.speed = self.normal_speed
+        if inventory:IsOverWeight() then
+            self.speed = self.too_much_weight_normal_speed
+        else
+            self.speed = self.normal_speed
+        end
     end
     local speed = self.speed * dt
     local vx = 0

@@ -6,9 +6,16 @@ function Settings:new()
     setmetatable(settings, Settings)
 
     --* Game Window Settings
-    settings.GAME_TITLE = "Space King"
+    settings.GAME_TITLE = "Space Lord"
     settings.IS_FULLSCREEN = false
-    settings.resolutions = love.window.getFullscreenModes()
+    local all_resolutions = love.window.getFullscreenModes()
+    settings.resolutions = {}
+
+    for i, mode in ipairs(all_resolutions) do
+        if mode.width >= 1280 and mode.height >= 720 then
+            table.insert(settings.resolutions, mode)
+        end
+    end
     table.sort(settings.resolutions, function(a, b) return a.width * a.height > b.width * b.height end)
     settings.current_resolution = #settings.resolutions
     settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT = settings.resolutions[settings.current_resolution].width, settings.resolutions[settings.current_resolution].height

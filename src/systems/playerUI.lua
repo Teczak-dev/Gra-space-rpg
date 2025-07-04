@@ -19,6 +19,12 @@ function PlayerUI:new(player)
         width = 200,
         height = 20
     }
+    playerUI.hpBarBG = {
+        x = 10,
+        y = 10,
+        width = 200,
+        height = 20
+    }
 
     playerUI.dashBar = {
         x = s.SCREEN_WIDTH/2 - 250,
@@ -28,17 +34,23 @@ function PlayerUI:new(player)
     }
 
     playerUI.is = {
-        mapOpen = false
+        mapOpen = false,
+        userHandTerminalOpen = false
     }
 
     playerUI.map_img = love.graphics.newImage("assets/map_img/test.JPG")
 
     playerUI.interaction_Text = ""
+
+
     return playerUI
 end
 
 function PlayerUI:draw()
     -- Draw the health bar
+    love.graphics.setColor(0, 0, 0) -- Black color for the health bar background
+    love.graphics.rectangle("fill", self.hpBarBG['x'], self.hpBarBG['y'], self.hpBarBG['width'], self.hpBarBG['height'])
+
     local hpPercentage = self.player.hp / self.player.maxhp
     love.graphics.setColor(1, 0, 0) -- Red color for the health bar
     love.graphics.rectangle("fill", self.hpBar['x'], self.hpBar['y'], self.hpBar['width'] * hpPercentage, self.hpBar['height'])
@@ -63,6 +75,7 @@ function PlayerUI:draw()
         love.graphics.draw(self.map_img, 200, 50, 0, love.graphics.getWidth() / self.map_img:getWidth() * 0.7 )
     end
     inventory:draw()
+    
 end
 function PlayerUI:update(dt)
     -- Update the player UI if needed
@@ -85,6 +98,10 @@ function PlayerUI:UpdateAfterChangeOfResolution()
 
     inventory:UpdateAfterChangeOfResolution()
     
+end
+
+function PlayerUI:OpenCloseUserHandTerminal()
+    self.is.userHandTerminalOpen = not self.is.userHandTerminalOpen
 end
 
 

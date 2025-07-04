@@ -92,7 +92,11 @@ function TalkSys:draw()
         }
         love.graphics.rectangle("fill", dialog_bg.x , dialog_bg.y, dialog_bg.w, dialog_bg.h)
         love.graphics.setColor(0.9,0.9,0.9)
-        love.graphics.printf(self.person, self.font2, dialog_bg.x + 10, dialog_bg.y + 10, dialog_bg.w - 20, "left")
+        if self.person ~= "Player" then
+            love.graphics.printf(self.npc.name, self.font2, dialog_bg.x + 10, dialog_bg.y + 10, dialog_bg.w - 20, "left")
+        else
+            love.graphics.printf(self.person, self.font2, dialog_bg.x + 10, dialog_bg.y + 10, dialog_bg.w - 20, "left")
+        end
         love.graphics.setColor(1, 1, 1)
         love.graphics.printf(self.text, self.font, dialog_bg.x + 10, dialog_bg.y + 60, dialog_bg.w - 20, "left")
 

@@ -3,7 +3,7 @@ Scenario.__index = Scenario
 
 Npcs = {}
 local function scenario_planet_001()
-    Npcs = { NPC:new(6900 , 4580, {
+    Npcs = { NPC:new(6900 , 4580,"Stranger", {
             {
                 person = "Player",
                 dialog = "Hey, what are you doing here?",

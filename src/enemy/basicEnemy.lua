@@ -21,10 +21,27 @@ function Enemy:new(x, y, patrolPoints)
     enemy.body:setFixedRotation(true)
     
     enemy.hp = 50
+    enemy.maxhp = 50
     enemy.shoot_cooldown = 1.5  -- Czas między strzałami
     enemy.last_shot_time = 0
     enemy.angle = 0
     
+    -- pasekHPPrzeciwnika
+    enemy.hpBar = {
+        x = enemy.x - enemy.width / 2,
+        y = enemy.y - enemy.height / 2 - 10,
+        width = enemy.width,
+        height = 5,
+        color = {1, 0, 0, 1} -- Czerwony
+    }
+    enemy.hpBarBG = {
+        x = enemy.x - enemy.width / 2,
+        y = enemy.y - enemy.height / 2 - 10,
+        width = enemy.width,
+        height = 5,
+        color = {0, 0, 0, 1} -- czarny
+    }
+
     -- Parametry patrolowania
     enemy.patrolPoints = patrolPoints or {
         {x = x - 200, y = y},      -- Domyślny punkt 1 (lewo)
@@ -64,6 +81,14 @@ function Enemy:new(x, y, patrolPoints)
 end
 
 function Enemy:draw()
+
+    -- Rysuj pasek HP przeciwnika
+    love.graphics.setColor(self.hpBarBG.color)
+    love.graphics.rectangle("fill", self.hpBarBG.x, self.hpBarBG.y, self.hpBarBG.width, self.hpBarBG.height)
+    love.graphics.setColor(self.hpBar.color)
+    local hpPercentage = self.hp / self.maxhp -- Zakładamy, że maksymalne HP to 100
+    love.graphics.rectangle("fill", self.hpBar.x, self.hpBar.y, self.hpBar.width * hpPercentage, self.hpBar.height)
+
     -- Rysuj przeciwnika
     love.graphics.setColor(1, 0, 0, 1)
     love.graphics.push()
@@ -121,6 +146,13 @@ function Enemy:update(dt)
     -- Aktualizuj położenie na podstawie ciała fizycznego
     self.x, self.y = self.body:getPosition()
     
+
+    self.hpBar.x = self.x - self.width / 2
+    self.hpBar.y = self.y - self.height / 2 - 10
+
+    self.hpBarBG.x = self.x - self.width / 2
+    self.hpBarBG.y = self.y - self.height / 2 - 10
+
     -- Timer strzału
     self.last_shot_time = self.last_shot_time - dt
     

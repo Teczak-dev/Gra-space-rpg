@@ -3,6 +3,7 @@ Inventory.__index = Inventory
 
 
 function Inventory:new()
+
     local inventory = {}
     setmetatable(inventory, Inventory)
     inventory.items = {
@@ -23,7 +24,7 @@ function Inventory:new()
         items_padding = 10
     }
     item_info_panel = {
-        x = s.SCREEN_WIDTH/2 - 200,
+        x = s.SCREEN_WIDTH/2 + 100,
         y = s.SCREEN_HEIGHT/2,
         width = 300,
         height = 400,
@@ -33,6 +34,12 @@ function Inventory:new()
         use = {
             x = item_info_panel.x + 10,
             y = item_info_panel.y + 10,
+            width = 50,
+            height = 20
+        },
+        drop = {
+            x = item_info_panel.x + 70,
+            y = item_info_panel.y + 40,
             width = 50,
             height = 20
         }
@@ -80,7 +87,7 @@ function Inventory:draw()
 
 
         if self.item_info_open then
-            love.graphics.setColor(0.396, 0.09, 0.659, 1)
+            love.graphics.setColor(0.396, 0.09, 0.659, 0.7)
             love.graphics.rectangle("fill", item_info_panel.x, item_info_panel.y, item_info_panel.width, item_info_panel.height)
             love.graphics.setColor(1, 1, 1)
 
@@ -91,10 +98,18 @@ function Inventory:draw()
             love.graphics.setColor(1, 1, 1)
 
             -- use button
-            love.graphics.setColor(0.1, 0.7, 0.1, 1)
-            love.graphics.rectangle("fill", item_info_buttons.use.x, item_info_buttons.use.y, item_info_buttons.use.width, item_info_buttons.use.height)
+            if self.selected_item.usable then
+                love.graphics.setColor(0.1, 0.7, 0.1, 1)
+                love.graphics.rectangle("fill", item_info_buttons.use.x, item_info_buttons.use.y, item_info_buttons.use.width, item_info_buttons.use.height)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.print("Use", item_info_buttons.use.x + 175, item_info_buttons.use.y + 5)
+            end
+
+            -- drop button
+            love.graphics.setColor(0.7, 0.1, 0.1, 1)
+            love.graphics.rectangle("fill", item_info_buttons.drop.x, item_info_buttons.drop.y, item_info_buttons.drop.width, item_info_buttons.drop.height)
             love.graphics.setColor(1, 1, 1)
-            love.graphics.print("Use", item_info_buttons.use.x + 10, item_info_buttons.use.y + 5)
+            love.graphics.print("Drop", item_info_buttons.drop.x + 175, item_info_buttons.drop.y + 5)   
 
         end
     end
@@ -139,23 +154,54 @@ function Inventory:UpdateAfterChangeOfResolution()
     inventory_panel.width = 350
     inventory_panel.height = s.SCREEN_HEIGHT
 
-    item_info_panel.x = 20
-    item_info_panel.y = 100
-    item_info_panel.width = 800
-    item_info_panel.height = 500
+    item_info_panel.x = inventory_panel.x - 400
+    item_info_panel.y = s.SCREEN_HEIGHT * 0.05
+    item_info_panel.width = 400
+    item_info_panel.height = s.SCREEN_HEIGHT * 0.9
+
 
     for i, button in pairs(item_info_buttons) do
-        button.x = item_info_panel.x + 10
-        button.y = item_info_panel.height - 60
-        button.width = 100
+        button.width = 400 - 20
         button.height = 40
     end
+    item_info_buttons.use.x = item_info_panel.x + 10
+    item_info_buttons.use.y = item_info_panel.height - 60
+    item_info_buttons.drop.x = item_info_panel.x + 10
+    item_info_buttons.drop.y = item_info_panel.height - 10
     
 end
 
 function Inventory:mouse(x,y)
     if #self.items == 0 then
         return
+    end
+    if self.item_info_open then
+        for _, button in pairs(item_info_buttons) do
+            if x > button.x and x < button.x + button.width then
+                if y > button.y and y < button.y + button.height then
+                    if button == item_info_buttons.use and self.selected_item.usable then
+                        self.selected_item:use()
+                        self.current_weight = self.current_weight - self.selected_item.weight
+                        if self.current_weight < 0 then
+                            self.current_weight = 0
+                        end
+                        self.items[self.selected_item_index] = nil
+                        self:CloseInventoryInfo()
+
+                    end
+                    if button == item_info_buttons.drop then
+                        self.current_weight = self.current_weight - self.selected_item.weight
+                        if self.current_weight < 0 then
+                            self.current_weight = 0
+                        end
+                        table.remove(self.items, self.selected_item_index)
+                        self.selected_item = nil
+                        self.selected_item_index = 0
+                        self:CloseInventoryInfo()
+                    end
+                end
+            end
+        end
     end
     for i, item in ipairs(self.items) do
         local itemY = inventory_panel.y + (i-1) * self.itemHeight + self.scrollY
@@ -187,5 +233,13 @@ function Inventory:CloseInventoryInfo()
     self.item_info_open = false
 end
 
+
+function Inventory:IsOverWeight()
+    if self.current_weight > self.max_weight then
+        return true
+    else
+        return false
+    end
+end
 
 return Inventory

@@ -132,6 +132,8 @@ function love.draw()
 
     love.graphics.setShader()
 
+
+    love.graphics.setFont(love.graphics.newFont(22))
     playerUI:draw()
     debug()
     pause:draw()
@@ -206,7 +208,7 @@ function love.keypressed(key)
         if pause.isPaused then
             if pause.isOptions then
                 pause:Options()
-                save_load:saveGame()
+                save_load:saveSettings()
             else
                 pause:resume()
             end
@@ -225,6 +227,9 @@ function love.keypressed(key)
     end
     if key == "i" then
         inventory:OpenCloseInventory()
+    end
+    if key == "p" then
+        playerUI:OpenCloseUserHandTerminal()
     end
 end
 

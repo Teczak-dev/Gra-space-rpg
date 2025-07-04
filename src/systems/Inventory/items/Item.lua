@@ -1,7 +1,7 @@
 local Item = {}
 Item.__index = Item
 
-function Item:new(name, description, type, image, value, weight)
+function Item:new(name, description, type, image, value, weight, usable)
     local item = {}
     setmetatable(item, Item)
     item.name = name
@@ -14,6 +14,7 @@ function Item:new(name, description, type, image, value, weight)
     item.use = function()
         print("Using item: " .. name)
     end
+    item.usable = usable or false -- Default to false if not specified
     return item
 end
 
