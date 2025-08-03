@@ -40,6 +40,7 @@ TalkSys = require 'src/systems/talksys'
 Time = require 'src/systems/time'
 Inventory = require 'src/systems/Inventory/inventory'
 ItemsDB = require 'src/systems/Inventory/ItemsDB'
+HandleTerminal = require 'src/systems/handleTerminal'
 
 
 Shaders = require 'src/shaders'
@@ -64,6 +65,7 @@ function love.load()
     sm = SceneManager:new(planet_001, {planet_001, space})
     pause = Pause:new()
     player = Player:new(6322 , 1160)
+    handleTerminal = HandleTerminal:new()
     inventory = Inventory:new()
     playerUI = PlayerUI:new(player)
     gun = Gun:new(player.x, player.y)
@@ -74,6 +76,7 @@ function love.load()
     shaders = Shaders:new()
     time = Time:new()
     enemy = Enemy:new(6000, 2000)
+
 end
 
 function love.update(dt)
@@ -230,6 +233,9 @@ function love.keypressed(key)
     end
     if key == "p" then
         playerUI:OpenCloseUserHandTerminal()
+    end
+    if key == "tab" then
+        handleTerminal.isOpen = not handleTerminal.isOpen
     end
 end
 

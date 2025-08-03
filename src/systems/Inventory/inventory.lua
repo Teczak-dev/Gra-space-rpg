@@ -79,7 +79,7 @@ function Inventory:draw()
         love.graphics.setColor(0.4, 0.4, 0.7, 1)
         love.graphics.rectangle("fill", inventory_panel.x, inventory_panel.y, inventory_panel.width, 40)
         love.graphics.setColor(1, 1, 1)
-        love.graphics.print("Inventory|Weight: "..self.current_weight.."/"..self.max_weight.."kg", inventory_panel.x + 10, inventory_panel.y + 7)
+        love.graphics.print("Inventory | Weight: "..self.current_weight.."/"..self.max_weight.."kg", inventory_panel.x + 10, inventory_panel.y + 7)
 
 
         love.graphics.setColor(1, 1, 1)

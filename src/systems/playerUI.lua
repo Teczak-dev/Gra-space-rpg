@@ -75,6 +75,7 @@ function PlayerUI:draw()
         love.graphics.draw(self.map_img, 200, 50, 0, love.graphics.getWidth() / self.map_img:getWidth() * 0.7 )
     end
     inventory:draw()
+    handleTerminal:draw()
     
 end
 function PlayerUI:update(dt)
@@ -82,6 +83,8 @@ function PlayerUI:update(dt)
     -- if inventory.isOpen then
     --     inventory:update(dt)
     -- end
+
+    -- handleTerminal:update(dt)
 end
 
 function PlayerUI:showText(text)
