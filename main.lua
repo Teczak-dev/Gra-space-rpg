@@ -231,11 +231,8 @@ function love.keypressed(key)
     if key == "i" then
         inventory:OpenCloseInventory()
     end
-    if key == "p" then
-        playerUI:OpenCloseUserHandTerminal()
-    end
     if key == "tab" then
-        handleTerminal.isOpen = not handleTerminal.isOpen
+        playerUI:OpenCloseUserHandTerminal()
     end
 end
 
@@ -250,6 +247,9 @@ function love.mousepressed(x,y, button)
                 gun:shoot()
                 gun.lastShotTime = gun.cooldown
             end
+        end
+        if handleTerminal.isOpen then
+            handleTerminal:mouse()
         end
     end
 end

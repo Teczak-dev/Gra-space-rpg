@@ -54,7 +54,7 @@ end
 
 function Inventory:draw()
     if self.isOpen then 
-        love.graphics.setColor(0.396, 0.09, 0.659, 0.9)
+        love.graphics.setColor(0.096, 0.09, 0.959, 0.9)
         love.graphics.rectangle("fill", inventory_panel.x, inventory_panel.y, inventory_panel.width, inventory_panel.height)
 
 

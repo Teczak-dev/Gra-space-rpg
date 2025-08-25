@@ -100,11 +100,12 @@ function PlayerUI:UpdateAfterChangeOfResolution()
     self.dashBar.y = s.SCREEN_HEIGHT- self.dashBar.height - 10
 
     inventory:UpdateAfterChangeOfResolution()
-    
+    handleTerminal:UpdateAfterChangeOfResolution()
 end
 
 function PlayerUI:OpenCloseUserHandTerminal()
     self.is.userHandTerminalOpen = not self.is.userHandTerminalOpen
+    handleTerminal.isOpen = not handleTerminal.isOpen
 end
 
 

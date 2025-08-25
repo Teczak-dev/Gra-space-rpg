@@ -1,5 +1,11 @@
 # Dokumentacja Projektu - Space Lord (Space RPG Game)
 
+## Do wykonania
+
+Trzeba zrobić w podręcznym terminalu opcję ekwipunku, dzienniku, mapy, umiejętności itd.
+rozmowa z sklepikarzem( handel ), odkrywanie mapy planety, wydobywanie surowców 
+
+
 ## Przegląd Projektu
 Projekt to gra 2D RPG w kosmosie napisana w języku Lua z wykorzystaniem frameworka LÖVE (Love2D). Gra zawiera system walki, ekwipunku, dialogów oraz eksploracji planet.
 
@@ -260,6 +266,7 @@ Skrypt budowania projektu
 - **E** - interakcja
 - **Escape** - pauza
 - **F11** - pełny ekran
+- **Tab** - podręczny terminal
 
 ### Mysz:
 - **LPM** - strzelanie

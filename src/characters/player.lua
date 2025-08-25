@@ -22,9 +22,13 @@ function Player:new(x,y)
     player.normal_speed = 20000
     player.speed = 20000
     player.sprint_speed = 40000
-    player.dash = 150
+    player.dash_duration = 0.15 -- czas trwania dash w sekundach
     player.dash_cooldown = 0.5
     player.dash_time = 0
+    player.is_dashing = false
+    player.dash_timer = 0
+    player.dash_direction_x = 0
+    player.dash_direction_y = 0
     player.body = love.physics.newBody(world, player.x, player.y, "dynamic")
     local radius = math.max(player.width, player.height) / 2 * 0.8 -- promień nieco mniejszy niż gracz
     player.shape = love.physics.newCircleShape(radius)
@@ -77,6 +81,16 @@ end
 function Player:update(dt)
     self.dash_time = self.dash_time + dt
 
+    -- Aktualizacja dash timer
+    if self.is_dashing then
+        self.dash_timer = self.dash_timer + dt
+        if self.dash_timer >= self.dash_duration then
+            self.is_dashing = false
+            self.dash_timer = 0
+        end
+    end
+
+    -- Ustawienie prędkości bazowej
     if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
         if inventory:IsOverWeight() then
             self.speed = self.too_much_weight_sprint_speed
@@ -90,10 +104,19 @@ function Player:update(dt)
             self.speed = self.normal_speed
         end
     end
+    
     local speed = self.speed * dt
     local vx = 0
     local vy = 0
-    if self.canMove then
+    
+    if self.is_dashing then
+        -- Podczas dash, użyj zapisanego kierunku z dużo większą prędkością
+        local dash_speed_multiplier = 6.0 -- mnożnik prędkości dash
+        local base_speed = self.speed * dt
+        vx = self.dash_direction_x * base_speed * dash_speed_multiplier
+        vy = self.dash_direction_y * base_speed * dash_speed_multiplier
+    elseif self.canMove then
+        -- Normalny ruch
         if love.keyboard.isDown("w") or love.keyboard.isDown("up")  then
             vy = -speed
         end
@@ -106,11 +129,21 @@ function Player:update(dt)
         if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
             vx = speed
         end
+        
+        -- Inicjowanie dash
         if love.keyboard.isDown("space") then
-            
-            if self.dash_time >= self.dash_cooldown  then
-                vx,vy = vx * self.dash, vy * self.dash
-                self.dash_time = 0
+            if self.dash_time >= self.dash_cooldown and not self.is_dashing then
+                -- Sprawdź czy gracz się porusza
+                if vx ~= 0 or vy ~= 0 then
+                    -- Normalizuj kierunek dash
+                    local length = math.sqrt(vx * vx + vy * vy)
+                    self.dash_direction_x = vx / length
+                    self.dash_direction_y = vy / length
+                    
+                    self.is_dashing = true
+                    self.dash_time = 0
+                    self.dash_timer = 0
+                end
             end
         end
     end
